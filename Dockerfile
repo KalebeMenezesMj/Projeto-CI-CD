@@ -1,12 +1,13 @@
 # Stage 1 — install PHP dependencies without dev packages
-FROM composer:2.7 AS vendor
+FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install \
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --optimize-autoloader \
     --no-dev \
     --no-interaction \
     --prefer-dist \
+    --no-scripts \
     --ignore-platform-reqs
 
 # Stage 2 — production image
