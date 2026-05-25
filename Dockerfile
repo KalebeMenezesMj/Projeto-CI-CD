@@ -13,8 +13,10 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
 # Stage 2 — imagem de produção (Debian, mais estável para extensões)
 FROM php:8.2-fpm AS production
 
-# Instalar dependências do sistema e extensões PHP
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Instalar dependências, compilar extensões PHP e remover pacotes de build
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
         nginx \
         supervisor \
         sqlite3 \
@@ -37,6 +39,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         exif \
         pcntl \
         mbstring \
+    && apt-get purge -y \
+        libsqlite3-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
+        libzip-dev \
+        libicu-dev \
+        libonig-dev \
+        linux-libc-dev \
+    && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
