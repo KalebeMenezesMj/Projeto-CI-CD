@@ -39,13 +39,19 @@ class Order extends Model
     ];
 
     const STATUS_PENDING = 'pending';
+
     const STATUS_PROCESSING = 'processing';
+
     const STATUS_SHIPPED = 'shipped';
+
     const STATUS_DELIVERED = 'delivered';
+
     const STATUS_CANCELLED = 'cancelled';
 
     const PAYMENT_CREDIT_CARD = 'credit_card';
+
     const PAYMENT_PIX = 'pix';
+
     const PAYMENT_BOLETO = 'boleto';
 
     public static function statusLabels()
@@ -80,7 +86,7 @@ class Order extends Model
 
     public function getStatusColorAttribute()
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_PENDING => 'warning',
             self::STATUS_PROCESSING => 'info',
             self::STATUS_SHIPPED => 'primary',
@@ -102,6 +108,6 @@ class Order extends Model
 
     public static function generateCode()
     {
-        return 'FL' . strtoupper(substr(uniqid(), -8));
+        return 'FL'.strtoupper(substr(uniqid(), -8));
     }
 }

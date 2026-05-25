@@ -35,10 +35,13 @@ class Address extends Model
     public function getFullAddressAttribute()
     {
         $parts = [$this->address, $this->number];
-        if ($this->complement) $parts[] = $this->complement;
+        if ($this->complement) {
+            $parts[] = $this->complement;
+        }
         $parts[] = $this->neighborhood;
         $parts[] = "{$this->city}/{$this->state}";
         $parts[] = $this->zipcode;
+
         return implode(', ', $parts);
     }
 }

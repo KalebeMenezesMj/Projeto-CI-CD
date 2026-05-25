@@ -24,7 +24,7 @@ class CheckoutController extends Controller
     {
         $cart = $this->getCart();
 
-        if (!$cart || $cart->items->isEmpty()) {
+        if (! $cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Seu carrinho está vazio.');
         }
 
@@ -53,7 +53,7 @@ class CheckoutController extends Controller
 
         $cart = $this->getCart();
 
-        if (!$cart || $cart->items->isEmpty()) {
+        if (! $cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Seu carrinho está vazio.');
         }
 
@@ -114,11 +114,12 @@ class CheckoutController extends Controller
     public function success()
     {
         $orderId = session('last_order_id');
-        if (!$orderId) {
+        if (! $orderId) {
             return redirect()->route('home');
         }
 
         $order = Order::with('items')->findOrFail($orderId);
+
         return view('checkout.success', compact('order'));
     }
 }

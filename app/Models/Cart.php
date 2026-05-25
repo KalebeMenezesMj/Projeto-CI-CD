@@ -23,7 +23,7 @@ class Cart extends Model
 
     public function getTotalAttribute()
     {
-        return $this->items->sum(fn($item) => $item->subtotal);
+        return $this->items->sum(fn ($item) => $item->subtotal);
     }
 
     public function getTotalItemsAttribute()

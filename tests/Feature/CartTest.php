@@ -14,6 +14,7 @@ class CartTest extends TestCase
     private function createProduct(array $overrides = []): Product
     {
         $category = Category::create(['name' => 'Rosas', 'slug' => 'rosas']);
+
         return Product::create(array_merge([
             'category_id' => $category->id,
             'name' => 'Rosa Vermelha',

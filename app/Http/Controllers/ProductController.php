@@ -21,7 +21,7 @@ class ProductController extends Controller
             $search = $request->busca;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -34,7 +34,7 @@ class ProductController extends Controller
         }
 
         $sort = $request->get('ordenar', 'latest');
-        match($sort) {
+        match ($sort) {
             'price_asc' => $query->orderBy('price'),
             'price_desc' => $query->orderByDesc('price'),
             'name' => $query->orderBy('name'),
@@ -52,7 +52,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        if (!$product->active) {
+        if (! $product->active) {
             abort(404);
         }
 

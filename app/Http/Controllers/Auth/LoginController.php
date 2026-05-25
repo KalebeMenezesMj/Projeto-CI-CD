@@ -32,7 +32,8 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             CartController::mergeSessionCart(auth()->id());
-            return redirect()->intended('/')->with('success', 'Bem-vindo(a), ' . auth()->user()->name . '!');
+
+            return redirect()->intended('/')->with('success', 'Bem-vindo(a), '.auth()->user()->name.'!');
         }
 
         return back()->withErrors([
@@ -45,6 +46,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/')->with('success', 'Você saiu com sucesso.');
     }
 }

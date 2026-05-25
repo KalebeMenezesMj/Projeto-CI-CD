@@ -20,8 +20,8 @@ class OrderController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('code', 'like', "%{$search}%")
-                  ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%"));
+                    ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%"));
             });
         }
 
@@ -33,6 +33,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load('user', 'items.product');
+
         return view('admin.orders.show', compact('order'));
     }
 

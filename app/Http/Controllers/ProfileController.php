@@ -17,6 +17,7 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         $addresses = $user->addresses()->get();
+
         return view('profile.index', compact('user', 'addresses'));
     }
 
@@ -26,14 +27,14 @@ class ProfileController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'phone' => 'nullable|string|max:20',
             'current_password' => 'nullable|string',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         if ($request->filled('current_password')) {
-            if (!Hash::check($request->current_password, $user->password)) {
+            if (! Hash::check($request->current_password, $user->password)) {
                 return back()->withErrors(['current_password' => 'Senha atual incorreta.']);
             }
         }
@@ -82,6 +83,7 @@ class ProfileController extends Controller
             abort(403);
         }
         $address->delete();
+
         return back()->with('success', 'Endereço removido com sucesso!');
     }
 }

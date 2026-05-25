@@ -41,6 +41,6 @@ class RegisterController extends Controller
         Auth::login($user);
         CartController::mergeSessionCart($user->id);
 
-        return redirect('/')->with('success', 'Conta criada com sucesso! Bem-vindo(a), ' . $user->name . '!');
+        return redirect('/')->with('success', 'Conta criada com sucesso! Bem-vindo(a), '.$user->name.'!');
     }
 }

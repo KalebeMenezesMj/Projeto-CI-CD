@@ -16,6 +16,7 @@ class CartController extends Controller
         }
 
         $sessionId = session()->getId();
+
         return Cart::firstOrCreate(['session_id' => $sessionId, 'user_id' => null]);
     }
 
@@ -23,6 +24,7 @@ class CartController extends Controller
     {
         $cart = $this->getCart();
         $cart->load('items.product.category');
+
         return view('cart.index', compact('cart'));
     }
 
@@ -35,7 +37,7 @@ class CartController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
-        if (!$product->active || $product->stock < $request->quantity) {
+        if (! $product->active || $product->stock < $request->quantity) {
             return back()->with('error', 'Produto indisponível ou estoque insuficiente.');
         }
 
@@ -58,7 +60,7 @@ class CartController extends Controller
             ]);
         }
 
-        return back()->with('success', "\"" . $product->name . "\" adicionado ao carrinho!");
+        return back()->with('success', '"'.$product->name.'" adicionado ao carrinho!');
     }
 
     public function update(Request $request, CartItem $item)
@@ -75,6 +77,7 @@ class CartController extends Controller
         }
 
         $item->update(['quantity' => $request->quantity]);
+
         return back()->with('success', 'Carrinho atualizado.');
     }
 
@@ -86,6 +89,7 @@ class CartController extends Controller
         }
 
         $item->delete();
+
         return back()->with('success', 'Item removido do carrinho.');
     }
 
@@ -93,6 +97,7 @@ class CartController extends Controller
     {
         $cart = $this->getCart();
         $cart->items()->delete();
+
         return back()->with('success', 'Carrinho esvaziado.');
     }
 
@@ -101,7 +106,7 @@ class CartController extends Controller
         $sessionId = session()->getId();
         $sessionCart = Cart::where('session_id', $sessionId)->where('user_id', null)->first();
 
-        if (!$sessionCart || $sessionCart->items()->count() === 0) {
+        if (! $sessionCart || $sessionCart->items()->count() === 0) {
             return;
         }
 
