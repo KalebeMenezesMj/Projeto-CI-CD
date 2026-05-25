@@ -1,4 +1,4 @@
-# Stage 1 — install PHP dependencies without dev packages
+# Stage 1 — PHP dependencies (sem dev, sem scripts)
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
@@ -10,25 +10,20 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-scripts \
     --ignore-platform-reqs
 
-# Stage 2 — production image
-FROM php:8.2-fpm-alpine AS production
+# Stage 2 — imagem de produção (Debian, mais estável para extensões)
+FROM php:8.2-fpm AS production
 
-# Install system packages and PHP extensions
-RUN apk add --no-cache \
+# Instalar dependências do sistema e extensões PHP
+RUN apt-get update && apt-get install -y --no-install-recommends \
         nginx \
         supervisor \
-        sqlite \
-        libpng \
-        libjpeg-turbo \
-        freetype \
-        libzip \
-        icu-libs \
-    && apk add --no-cache --virtual .build-deps \
+        sqlite3 \
         libpng-dev \
-        libjpeg-turbo-dev \
-        freetype-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
         libzip-dev \
-        icu-dev \
+        libicu-dev \
+        libonig-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
         pdo_sqlite \
@@ -40,18 +35,19 @@ RUN apk add --no-cache \
         intl \
         exif \
         pcntl \
-    && apk del .build-deps \
-    && rm -rf /var/cache/apk/*
+        mbstring \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html
 
-# Copy vendor from Stage 1
+# Copiar vendor do Stage 1
 COPY --from=vendor /app/vendor ./vendor
 
-# Copy application source (excluding files in .dockerignore)
+# Copiar código-fonte (respeitando .dockerignore)
 COPY . .
 
-# Create required runtime directories and set permissions
+# Criar diretórios de runtime e definir permissões
 RUN mkdir -p \
         storage/framework/sessions \
         storage/framework/views \
@@ -63,7 +59,7 @@ RUN mkdir -p \
     && chown -R www-data:www-data storage bootstrap/cache database \
     && chmod -R 775 storage bootstrap/cache database
 
-# Copy Docker config files
+# Copiar configs do Docker
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/php.ini /usr/local/etc/php/conf.d/app.ini
