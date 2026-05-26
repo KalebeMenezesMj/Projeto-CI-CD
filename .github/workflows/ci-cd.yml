@@ -192,8 +192,12 @@ jobs:
             echo 'docker stop flores-e-sonhos 2>/dev/null || true'
             echo 'docker rm   flores-e-sonhos 2>/dev/null || true'
             echo 'sudo mkdir -p /opt/flores-e-sonhos/storage/framework/sessions /opt/flores-e-sonhos/storage/framework/views /opt/flores-e-sonhos/storage/framework/cache/data /opt/flores-e-sonhos/storage/logs /opt/flores-e-sonhos/storage/app/public /opt/flores-e-sonhos/database'
-            echo 'sudo chown -R ubuntu:ubuntu /opt/flores-e-sonhos'
-            echo "docker run -d --name flores-e-sonhos --restart unless-stopped -p 80:80 -e APP_ENV=production -e APP_DEBUG=false -e 'APP_KEY=$APP_KEY' -e DB_CONNECTION=sqlite -e DB_DATABASE=/var/www/html/database/database.sqlite -v /opt/flores-e-sonhos/storage:/var/www/html/storage -v /opt/flores-e-sonhos/database:/var/www/html/database '$IMAGE'"
+            echo 'sudo touch /opt/flores-e-sonhos/database/database.sqlite'
+            echo 'sudo chown -R 33:33 /opt/flores-e-sonhos/storage'
+            echo 'sudo chmod -R 775 /opt/flores-e-sonhos/storage'
+            echo 'sudo chown 33:33 /opt/flores-e-sonhos/database/database.sqlite'
+            echo 'sudo chmod 664 /opt/flores-e-sonhos/database/database.sqlite'
+            echo "docker run -d --name flores-e-sonhos --restart unless-stopped -p 80:80 -e APP_ENV=production -e APP_DEBUG=false -e 'APP_KEY=$APP_KEY' -e DB_CONNECTION=sqlite -e DB_DATABASE=/var/www/html/database/database.sqlite -v /opt/flores-e-sonhos/storage:/var/www/html/storage -v /opt/flores-e-sonhos/database/database.sqlite:/var/www/html/database/database.sqlite '$IMAGE'"
             echo 'docker image prune -f'
             echo 'echo Deploy concluido'
           } > /tmp/deploy.sh
