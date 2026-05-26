@@ -9,7 +9,7 @@
             <div class="text-center mb-4">
                 <div style="font-size: 3rem;">🌸</div>
                 <h2 class="fw-bold">Entrar na sua conta</h2>
-                <p class="text-muted">Bem-vindo(a) de volta à Flores & Sonhos</p>
+                <p class="text-muted">Bem-vindos(a) de volta à Flores & Sonhos</p>
             </div>
 
             <div class="card shadow border-0 rounded-4">
