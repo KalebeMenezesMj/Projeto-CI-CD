@@ -181,8 +181,11 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
+          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          echo "Key lines: $(wc -l < ~/.ssh/id_rsa)"
+          head -1 ~/.ssh/id_rsa
+          tail -1 ~/.ssh/id_rsa
 
       - name: Deploy no servidor
         uses: appleboy/ssh-action@v1.2.2
