@@ -179,43 +179,20 @@ jobs:
       - name: Configurar chave SSH
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
       - name: Deploy no servidor
         env:
           IMAGE: "${{ secrets.DOCKERHUB_USERNAME }}/flores-e-sonhos:latest"
           APP_KEY: "${{ secrets.APP_KEY }}"
+          SSH_HOST: "${{ secrets.SSH_HOST }}"
+          SSH_USER: "${{ secrets.SSH_USER }}"
+          SSH_PORT: "${{ secrets.SSH_PORT }}"
         run: |
-          ssh -i ~/.ssh/id_rsa \
-            -o StrictHostKeyChecking=no \
-            -p ${{ secrets.SSH_PORT }} \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-              set -e
-              docker pull '$IMAGE'
-              docker stop flores-e-sonhos 2>/dev/null || true
-              docker rm   flores-e-sonhos 2>/dev/null || true
-              mkdir -p /opt/flores-e-sonhos/storage/framework/sessions
-              mkdir -p /opt/flores-e-sonhos/storage/framework/views
-              mkdir -p /opt/flores-e-sonhos/storage/framework/cache/data
-              mkdir -p /opt/flores-e-sonhos/storage/logs
-              mkdir -p /opt/flores-e-sonhos/storage/app/public
-              mkdir -p /opt/flores-e-sonhos/database
-              docker run -d \
-                --name flores-e-sonhos \
-                --restart unless-stopped \
-                -p 80:80 \
-                -e APP_ENV=production \
-                -e APP_DEBUG=false \
-                -e 'APP_KEY=$APP_KEY' \
-                -e DB_CONNECTION=sqlite \
-                -e DB_DATABASE=/var/www/html/database/database.sqlite \
-                -v /opt/flores-e-sonhos/storage:/var/www/html/storage \
-                -v /opt/flores-e-sonhos/database:/var/www/html/database \
-                '$IMAGE'
-              docker image prune -f
-              echo 'Deploy concluido'
-            "
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p "$SSH_PORT" "${SSH_USER}@${SSH_HOST}" "set -e; docker pull '$IMAGE'; docker stop flores-e-sonhos 2>/dev/null || true; docker rm flores-e-sonhos 2>/dev/null || true; mkdir -p /opt/flores-e-sonhos/storage/framework/sessions /opt/flores-e-sonhos/storage/framework/views /opt/flores-e-sonhos/storage/framework/cache/data /opt/flores-e-sonhos/storage/logs /opt/flores-e-sonhos/storage/app/public /opt/flores-e-sonhos/database; docker run -d --name flores-e-sonhos --restart unless-stopped -p 80:80 -e APP_ENV=production -e APP_DEBUG=false -e 'APP_KEY=$APP_KEY' -e DB_CONNECTION=sqlite -e DB_DATABASE=/var/www/html/database/database.sqlite -v /opt/flores-e-sonhos/storage:/var/www/html/storage -v /opt/flores-e-sonhos/database:/var/www/html/database '$IMAGE'; docker image prune -f; echo 'Deploy concluido'"
