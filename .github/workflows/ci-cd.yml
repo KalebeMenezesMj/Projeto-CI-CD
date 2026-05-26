@@ -195,4 +195,29 @@ jobs:
           SSH_USER: "${{ secrets.SSH_USER }}"
           SSH_PORT: "${{ secrets.SSH_PORT }}"
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p "$SSH_PORT" "${SSH_USER}@${SSH_HOST}" "set -e; docker pull '$IMAGE'; docker stop flores-e-sonhos 2>/dev/null || true; docker rm flores-e-sonhos 2>/dev/null || true; mkdir -p /opt/flores-e-sonhos/storage/framework/sessions /opt/flores-e-sonhos/storage/framework/views /opt/flores-e-sonhos/storage/framework/cache/data /opt/flores-e-sonhos/storage/logs /opt/flores-e-sonhos/storage/app/public /opt/flores-e-sonhos/database; docker run -d --name flores-e-sonhos --restart unless-stopped -p 80:80 -e APP_ENV=production -e APP_DEBUG=false -e 'APP_KEY=$APP_KEY' -e DB_CONNECTION=sqlite -e DB_DATABASE=/var/www/html/database/database.sqlite -v /opt/flores-e-sonhos/storage:/var/www/html/storage -v /opt/flores-e-sonhos/database:/var/www/html/database '$IMAGE'; docker image prune -f; echo 'Deploy concluido'"
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p "$SSH_PORT" "${SSH_USER}@${SSH_HOST}" bash << ENDSSH
+          set -e
+          docker pull "$IMAGE"
+          docker stop flores-e-sonhos 2>/dev/null || true
+          docker rm   flores-e-sonhos 2>/dev/null || true
+          mkdir -p /opt/flores-e-sonhos/storage/framework/sessions \
+                   /opt/flores-e-sonhos/storage/framework/views \
+                   /opt/flores-e-sonhos/storage/framework/cache/data \
+                   /opt/flores-e-sonhos/storage/logs \
+                   /opt/flores-e-sonhos/storage/app/public \
+                   /opt/flores-e-sonhos/database
+          docker run -d \
+            --name flores-e-sonhos \
+            --restart unless-stopped \
+            -p 80:80 \
+            -e APP_ENV=production \
+            -e APP_DEBUG=false \
+            -e "APP_KEY=$APP_KEY" \
+            -e DB_CONNECTION=sqlite \
+            -e DB_DATABASE=/var/www/html/database/database.sqlite \
+            -v /opt/flores-e-sonhos/storage:/var/www/html/storage \
+            -v /opt/flores-e-sonhos/database:/var/www/html/database \
+            "$IMAGE"
+          docker image prune -f
+          echo "Deploy concluido"
+          ENDSSH
