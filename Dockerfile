@@ -48,7 +48,6 @@ RUN apt-get update \
         libicu-dev \
         libonig-dev \
         linux-libc-dev \
-    && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
