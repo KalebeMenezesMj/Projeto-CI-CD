@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <p class="text-uppercase small mb-2" style="color: #e91e8c; letter-spacing: 3px;"> Teste</p>
+                <p class="text-uppercase small mb-2" style="color: #e91e8c; letter-spacing: 3px;">🌸 Floricutura Premium</p>
                 <h1 class="display-4 fw-bold mb-3" style="color: white; line-height: 1.2;">
                     Flores que Falam<br>
                     <span style="color: #f8bbd0;">o que as Palavras</span><br>
