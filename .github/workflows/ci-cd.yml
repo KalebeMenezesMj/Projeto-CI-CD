@@ -55,7 +55,7 @@ jobs:
           coverage: none
 
       - name: Audit Composer packages
-        run: composer audit --no-dev
+        run: composer audit --locked --no-dev
 
   # ── 3. TESTES FUNCIONAIS + COBERTURA ──────────────────────────────────────
   test:
